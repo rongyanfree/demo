@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/new_list.css"/>
+		<link rel="stylesheet" type="text/css" href="css/iconfont.css"/>
+		<!-- <link rel="stylesheet" type="text/css" href="lib/ionic/css/ionic.min.css"/> -->
+		<link rel="stylesheet" type="text/css" href="css/swiper-3.3.1.min.css"/>
+		<!-- <script src="lib/ionic/js/ionic.bundle.min.js" type="text/javascript" charset="utf-8"></script> -->
+		<title>分类列表</title>
+	</head>
+	<body>
+		<div class="wrap">
+			<header>
+				<div class="hea-left">
+					<i class="icon iconfont">&#xe702;</i>
+				</div>
+				<div class="hea-center">
+					<div>
+						<input type="text" class="hy_seach" placeholder="请输入商品名、疾病、症状"/>
+						<!-- <img src="images/del.jpg" />
+											    <span></span> -->
+					</div>
+				</div>
+				<div class="hea-right">
+				    <span>
+				       <img class="shop_car" src="images/new_list_05.jpg" alt="" />
+				       <i style="display: none"></i>
+				    </span>
+					<a href="classify.html"><img class="menu" src="images/new_list_07.jpg" alt="" /></a>
+				</div>
+			</header>
+			<nav>
+				<ul>
+					<!-- <li class="on">
+					  <a>全部分类</a>
+					  <span class="on"></span>
+					</li> -->
+					<li onclick="Price_Sorted(this)" data="1">价格
+						<img class="price-top" src="images/new_list_13.jpg" alt="" />
+						<img class="price-down" src="images/new_list_16.jpg"/>
+					</li>
+					<li onclick="Sales_Order(this)" data="3">销量
+						<img class="price-top" src="images/new_list_13.jpg" alt="" />
+						<img class="price-down" src="images/new_list_16.jpg"/>
+					</li>
+					<li class="hy_max">
+					    <img src="images/hy_max_03.png">
+						<a href="javascript:;">大图</a>
+					</li>
+				</ul>
+			</nav>
+			<section>
+				<div id="wrapper">
+				  <div id="scroller">
+					<div class="hy_maxImg cl">
+					 <!--<dl class="cl">
+					 	 <dt><img src="images/pic.png"></dt>
+					 	 <dd>
+					 	 	<h2>氨基酸蛋白质粉 安利皮爸高撒地方 （大）150ml</h2>
+					 	 	<span>本商品由叮当快药提供</span>
+					 	 	<p><em>￥</em>58.00</p>
+					 	 	<a>已有<em>2588人</em>购买</a>
+					 	 	<img src="images/icon4.png">
+					 	 </dd>
+					 </dl>
+					 <dl class="cl">
+					 	 <dt><img src="images/pic.png"></dt>
+					 	 <dd>
+					 	 	<h2>氨基酸蛋白质粉 安利皮爸高撒地方 （大）150ml</h2>
+					 	 	<span>本商品由叮当快药提供</span>
+					 	 	<p><em>￥</em>58.00</p>
+					 	 	<a>已有<em>2588人</em>购买</a>
+					 	 	<img src="images/icon4.png">
+					 	 </dd>
+					 </dl> -->
+					</div>
+					<div id="pullUp" class="" style="display:none">
+                      <span class="pullUpLabel">上拉加载更多...</span>
+		         	</div>
+				</div>
+				</div>
+	        </section>
+			<div class="box-mask">
+				<div class="box-mask1"></div>
+			<div class="mask cl">
+			   <div class="menu_1">
+			   	  <ul>
+				   </ul>
+			   </div>
+			   <div class="menu_2">
+			   	 <ul>
+				   </ul>  
+			   </div>
+			</div>
+			</div>
+	</body>
+</html>
+<script src="js/swiper-3.3.1.min.js"></script>
+<script src="js/zepto.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/iscroll4.js"></script>
+<script type="text/javascript" src="../js/base.js"></script>
+<script src="js/new_list.js"></script>
+<script type="text/javascript">
+    var datalist;
+    var myScroll=false;
+    var totalcount = 0;
+    var flag = true;//控制点击多次排序的加载次数
+   	var load = true;//控制上拉刷新的频繁操作
+   $('.box-mask').on('click',function () {
+        $(this).hide();
+    });
+    // 点击全部
+	$(".on").click(function(){
+		$(".box-mask").show();
+		$(".on").css("color","#52a2ed");
+		$(this).find('span').css({'border-bottom':"6px solid #52a2ed"});
+	});
+
+	$('.hy_seach').on('click',function(){
+       window.location.href='seach.html';
+	});
+
+	// 搜索
+
+	$('.hea-center div img').on('click',function () {
+       Ajax()
+	});
+
+
+	var menu=$('.hy_max>a'); //头部
+	
+
+    var maxImg=$('#scroller>div').eq(0);
+    //var list_img=$('.hy_listImg');
+    menu.on('click',function(){ /*hy_listImg*/
+      if(maxImg.hasClass('hy_maxImg')){
+      	  maxImg.attr('class','hy_listImg cl');
+          $('.hy_max img').attr('src','images/list_1.png');
+          $('.hy_max a').text('列表');
+      } else {
+      	  maxImg.attr('class','hy_maxImg cl');
+      	  $('.hy_max img').attr('src','images/hy_max_03.png');
+      	  $('.hy_max a').text('大图');
+      };
+      
+    });
+ 
+    Ajax(1);
+	//价格排序
+    var page = 1; 
+	function Price_Sorted (obj) {
+	  if(flag == true){
+	   $(".hy_maxImg").empty();
+	   var d=$(obj).attr('data');
+	   page = 1
+	   if (d == 1) {//价格正序
+	   	 Ajax(page,d); 
+	   	 $(obj).attr('data',2);
+	   	 $(obj).find('img').eq(0).attr('src','images/new_list_t.png').parent().addClass("pricechange");
+	   	 $(obj).find('img').eq(0).attr('src','images/new_list_t.png').parent().next().removeClass("salechange");
+	   	 $(obj).find('img').eq(1).attr('src','images/new_list_16.jpg');
+	   } else {
+	   	 Ajax(page,d); 
+	   	 $(obj).attr('data',1);
+	   	 $(obj).find('img').eq(1).attr('src','images/new_list_b.png')
+	   	 $(obj).find('img').eq(1).attr('src','images/new_list_b.png').parent().prev().removeClass("pricechange");
+	   	 $(obj).find('img').eq(0).attr('src','images/new_list_13.jpg');
+	   };
+	   $(obj).next().find('img').eq(0).attr('src','images/new_list_13.jpg');
+       $(obj).next().find('img').eq(1).attr('src','images/new_list_16.jpg');
+	   $('#scroller>div').eq(0).empty();
+	   if($('.box-mask').css("display") == "block"){
+         $('.box-mask').hide();
+      }
+  	 }
+	};
+
+
+	//销量排序
+
+	function Sales_Order (obj) {
+	 if(flag == true){
+	  $(".hy_maxImg").empty();
+      var d=$(obj).attr('data');
+	   page=1
+	   if(d==3){
+	   	 Ajax(page,d); 
+	   	 $(obj).attr('data',4);
+	   	 $(obj).find('img').eq(0).attr('src','images/new_list_t.png').parent().addClass("salechange");
+	   	  $(obj).find('img').eq(0).attr('src','images/new_list_t.png').parent().prev().removeClass("pricechange");
+	   	 $(obj).find('img').eq(1).attr('src','images/new_list_16.jpg');
+	   }else{
+	   	 Ajax(page,d); 
+	   	 $(obj).attr('data',3);
+	   	 $(obj).find('img').eq(1).attr('src','images/new_list_b.png');
+	   	 $(obj).find('img').eq(0).attr('src','images/new_list_13.jpg');
+	   }
+
+	   $(obj).prev().find('img').eq(0).attr('src','images/new_list_13.jpg');
+       $(obj).prev().find('img').eq(1).attr('src','images/new_list_16.jpg');
+       $('#scroller>div').eq(0).empty();
+       if($('.box-mask').css("display") == "block"){
+         $('.box-mask').hide();
+      }
+      }
+	};
+
+function showtwo(i){
+	  $('.menu_2 ul').empty();
+      $.each(datalist[i].tagtypes,function (n,b) {
+      	//console.log(i);
+      $('<li data="'+b.id+'"><a href="javascript:;">'+b.name+'</a></li>').appendTo('.menu_2 ul');
+
+     });
+}; 
+
+ function tagList (obj) {
+ 	//$('.hy_maxImg').empty();
+    $.each(obj,function (i,b) {
+     if( b.countnum == undefined ){
+     	b.countnum = 0;
+     };
+     $('<dl class="cl"><dt><img src="'+b.imgurl+'" onclick="tj(this)" data="'+b.prdid+'"/></dt><dd><h2>'+b.name+'</h2><span>自营</span><p><em>￥</em>'+b.price+'</p><a>已有<em>'+b.countnum+'人</em>购买</a><img src="images/icon4.png" data="'+b.prdid+'" onclick="add(this)"></dd></dl>').appendTo($('#scroller>div').eq(0));
+	});
+    if(myScroll == false){
+      myScroll = true;
+    }else {
+     myScroll.refresh();
+    }
+
+};
+
+	function pullUpAction () { //上拉加载更多
+	  if(load == true){
+		//实现上拉加载更多的时候的排序
+		var price = $("nav>ul>li:nth-of-type(1)");
+		var sale = $("nav>ul>li:nth-of-type(2)");	
+		var d;
+		if(price.hasClass("pricechange")){
+			d = price.attr("data");
+			if(d == "1"){
+				d = 2;
+			}else{
+				d = 1;
+			}
+		}else if(sale.hasClass("salechange")){
+			d = sale.attr("data");
+			if(d == "3"){
+				d = 4;
+			}else{
+				d = 3;
+			}
+		}else{
+			d = "1";
+		}
+		page++;
+		if(page<=Math.ceil(totalcount/6)){
+			Ajax(page,d);
+			myScroll.refresh();
+		}else if(page>Math.ceil(totalcount/6)){
+			$('#pullUp').show();
+			$(".pullUpLabel").text("没有更多内容了...")
+
+		}
+	   }	
+	};
+
+function Ajax(page,d,txt){ // ajax后台交互
+	flag = false;
+  	load = false;
+	var typeid=1,count=6,page=page;
+	if(txt){
+	 var tagid=txt;
+	}else{
+	 var tagid=getparam().id;	
+	};
+//	console.log(tagid)
+
+	if(typeof(d) == "undefined"){
+	  var orderby='';
+	}else{
+	  var orderby=d;
+	};
+
+    $.ajax({
+        type : "post",
+        url : "/testback/fast/getPrdByTagid", // 请求的地址
+        data :"info={tagid:'" + tagid + "',typeid:'" + typeid + "',count:'" + count + "',page:'" + page + "',orderby:'"+orderby+"'}",
+        dataType : "json",
+        success : function(data){
+          console.log(data)
+          totalcount = data.totalcount;
+          if ( page == 1 && data.prdMats.length == 0 ) {
+             $('section').addClass('pick');
+          }
+          if(data.code==0){
+            if(data.prdMats.length!=0){
+                tagList(data.prdMats);
+              }else{
+            	$('.pullUpLabel').text('没有更多内容了');
+                page=1;
+           };
+           if(data.prdMats.length < 6){
+           	 $('#pullUp').hide();
+           } else {
+           	$('#pullUp').show();
+           }
+           $('.menu_2 ul').empty();
+           $('.menu_1 ul').empty();
+           //全部分类
+          /* datalist = data.tagTypes;
+           $.each(data.tagTypes,function (i,d) {
+              $('<li data="'+d.id+'" onclick=showtwo('+i+')><a href="javascript:;">'+d.name+'</a></li>').appendTo('.menu_1 ul');
+           });
+           $('.menu_1 ul li').eq(0).addClass('over');
+           $('.menu_1 ul li').eq(0).trigger('click');*/
+          }else{
+          	$('#first').html('<span>'+data.msg+'</span>');
+          	$('.pullUpLabel').html('');
+          }
+          flag = true;
+    	  load = true;
+        }
+    });
+};
+
+
+    /*var menu1=$('.menu_1 ul li');// 一级菜单 li 
+	var menu2=$('.menu_2 ul li')// 二级菜单 li
+
+    menu1.live('click',function(){ // 一级菜单
+    	$(this).addClass('over').siblings().removeClass('over');
+    });
+    menu2.live('click',function(){ //  点击二级菜单 
+    	$(this).addClass('pick').siblings().removeClass('pick');
+    	$('.on a').text($(this).find('a').text());
+    	$('.box-mask').hide();
+    	$(".on").css("color","#000");
+		$(".on").find('span').css({'border-bottom':"6px solid #999999"});
+    	 if($(this).index()== 0 ){
+    	  for ( var i = 0; i < $('.menu_1 ul li').length; i++) {
+    	   	  if($('.menu_1 ul li').eq(i).attr('class')=='over'){
+    	   	  	 $('.on a').text($('.menu_1 ul li').eq(i).find('a').text());
+    	   	  	 console.log($('.menu_1 ul li').eq(i).attr('data'))
+    	   	  }
+    	   }  
+    	 };
+    	 Ajax(1,"",$(this).parent().attr('data'));
+
+    });*/
+  $(".hea-left").on("click",function(){
+  	history.go(-1);
+  })  
+</script>

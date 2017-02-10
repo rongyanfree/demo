@@ -1,0 +1,531 @@
+@import url(reset.css);
+html {
+  font-size: 62.5%;
+}
+.full {
+  width: 100%;
+  height: 100%;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  -webkit-text-size-adjust: none;
+  overflow: hidden;
+}
+.cl:after,.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}
+.wrap {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  width: 100%;
+  height: 100%;
+}
+header {
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  width: 100%;
+  height: 4.4rem;
+  background: #f9f9f9;
+  border-bottom: 1px solid #dbdbdb;
+}
+header .hea-left i {
+    color: #52a2ed;
+    line-height: 46px;
+    margin-left: 5px;
+    font-size: 19px;
+}
+header .hea-center {
+   -webkit-box-flex: 1;
+
+    padding-top: 8px;
+}
+header .hea-center div{
+    position: relative;
+    width: 95%;
+    margin: 0 auto;
+}
+
+header .hea-center div img{
+    width: 1rem;
+    position: absolute;
+    right: 4.5rem;
+    top: 8px;
+    z-index: 99;
+}
+
+
+header .hea-center input {
+    display: block;
+    width: 94%;
+    height: 3rem;
+    background: #fff;
+    border-radius: 1.3rem;
+    border: none;
+    outline: none;
+    padding: 0 10px;
+    box-sizing: border-box;
+    font-size: 1.3rem;
+    border: 1px solid #c9c9c9;
+    margin: 0 auto;
+    -webkit-appearance: none;
+    background:#fff url(../images/sech1.png) no-repeat 1rem center;
+    background-size: 1.2rem;
+    text-indent: 1.8rem;
+}
+
+header .hea-center span{
+    position: absolute;
+    width: 3rem;
+    height: 27px;
+    top: 1px;
+    right: 9px;
+    display: block;
+    background: #f9f9f9 url(../images/sech1.png) no-repeat;
+    background-size: 51%;
+    background-position: center;
+    border-radius: 2px;
+    border-left: 1px solid #c9c9c9;
+}
+
+header .hea-right {
+line-height: 45px;
+}
+header .hea-right .shop_car {
+  width: 26px;
+  height: auto;
+  padding-right: 5px;
+
+}
+header .hea-right .menu {
+  width: 30px;
+  height: auto;
+  padding-right: 10px;
+  margin-left: .7rem;
+}
+
+.hea-right>span{
+    display: inline-block;
+    position: relative;
+}
+
+.hea-right>span i{
+    position: absolute;
+    top: 9px;
+    right: 1px;
+    display: block;
+    background-color: #f23030;
+    line-height: 11px;
+    font-style: normal;
+    border-radius: 8px;
+    padding: 0 .06rem;
+    font-size: 8px;
+    color: #fff;
+}
+/*新增*/
+.search_list{
+  width:100%;
+  height:44px;
+  background:#fff;
+  border-bottom:1px solid #ededed;
+  overflow-x: auto;
+  overflow-y:hidden;
+}
+.search_list::-webkit-scrollbar{
+  width:0;
+  height:0;
+}
+.search_list ul{
+  height:44px;
+}
+.all{
+  margin-left:14px !important;
+}
+.search_list li{
+  float:left;
+  list-style: none;
+  height: 30px;
+  padding:0 10px;
+  margin:7px 5px;
+  border:1px solid #dedede;
+  line-height: 30px;
+  border-radius: 5px;
+  font-size:14px;
+  color:#999;
+}
+.search_list .active{
+  background:#e84345;
+  color:#fff;
+  border:0;
+}
+nav {
+    width: 100%;
+    height: 44px;
+    border-bottom: 1px solid #ededed;
+}
+nav ul {
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  padding-top:12px;
+  text-align: center;
+}
+nav ul li {
+    -webkit-box-flex: 1;
+    border-left: 1px solid #ededed;
+    height: 26px;
+    line-height: 25px;
+    font-size: 1.5rem
+}
+nav ul li img {
+  width: 6px;
+  height: auto;
+  margin-left: 3px;
+}
+nav ul li:nth-child(1),
+nav li:nth-child(2) ,.hy_price{
+  position: relative;
+}
+nav ul li:nth-child(1) .price-top,
+nav li:nth-child(2) .price-top,.hy_price  .price-top{
+  position: absolute;
+  top: 8px;
+}
+nav ul li:nth-child(1) .price-down,
+nav li:nth-child(2) .price-down ,.hy_price .price-down{
+  position: absolute;
+  top: 14px;
+}
+nav .on {
+  height: 24px;
+  line-height: 31px;
+  -webkit-box-flex: 1;
+  border-left: 1px solid #ededed;
+  margin-top: -3px;
+}
+nav .on span {
+  margin-left: 8px;
+  margin-top: -10px;
+  display: inline-block;
+  border-bottom: 6px solid #999999;
+  border-left: 6px solid transparent;
+}
+
+nav .hy_lis{
+    width: 1.3rem;
+    margin-top: -0.2rem;
+}
+
+nav .hy_max img{
+    width: 1.3rem;
+    margin-top: -0.2rem;
+}
+
+section {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  width: 100%;
+  -webkit-box-flex: 1;
+  overflow-y: auto;
+  position: relative;
+
+}
+
+section.pick{
+  background-image: url(../images/sech_no.png);
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+
+}
+
+section::-webkit-scrollbar {
+  width: 0px;
+}
+section #wrapper {
+  -webkit-box-flex: 1;
+  overflow-y: auto;
+}
+
+
+/* 大图 */
+
+.hy_maxImg dl{
+  width:50%;
+  float:left;
+  border-right:1px solid #ededed;
+  border-bottom:1px solid #ededed;
+  padding-bottom: .5rem;
+  /* height:19rem; */
+}
+
+.hy_maxImg dl dt{
+  margin-bottom: 1rem;
+  width:100%;
+  margin: 0 auto;
+  background-position: center;
+  background-size: 10rem;
+  height:10rem;
+  background-repeat: no-repeat;
+}
+
+.hy_maxImg dl a{
+  display: block;
+  padding-top: .7rem;
+}
+
+.hy_maxImg dl dt img{
+    margin: 0 auto;
+    display: block;
+    padding-top: 2rem;
+    width: 53%;
+    height: 10rem;
+}
+
+.hy_maxImg dl dd{
+  width:86%;
+  margin: 0 auto;
+  position:relative;
+}
+
+.hy_maxImg dl dd h2{
+   width: 92%;
+   overflow: hidden;
+   word-wrap: normal;
+   text-overflow: ellipsis;
+   font-size: 1.3rem;
+   color: #333333;
+   height: 2rem;
+   /* width: 16rem; */
+   word-break: break-all;
+   word-wrap: break-word;
+}
+
+.hy_maxImg dl dd span{
+    font-size: 1.26rem;
+    color: #666666;
+    display: block;
+    line-height: 2rem;
+}
+
+.hy_maxImg dl dd p{
+    font-size: 1.7rem;
+    color: #e6454a;
+    line-height: 2rem;
+}
+
+.hy_maxImg dl dd p em{
+  font-size:1rem;
+}
+
+.hy_maxImg dl dd a{
+  color:#666666;
+font-size: 1.2rem;
+}
+
+.hy_maxImg dl dd a em{
+  color:#f7a157;
+}
+
+.hy_maxImg dl dd img{
+    width: 17%;
+    position: absolute;
+    right: .4rem;
+    bottom: .5rem
+}
+
+/*大图 结束*/
+
+/* 列表 */
+.hy_listImg dl{
+    border-bottom: 1px solid #ededed;
+}
+
+.hy_listImg dl dt{
+  width:33%;
+  float: left;
+  margin-top: .3rem;
+}
+
+.hy_listImg dl dt img{
+    width: 7rem;
+    margin: 1rem auto;
+    display: block;
+}
+
+.hy_listImg dl dd{
+  position:relative;
+  width:67%;
+  float:left;
+  padding-top: 1rem;
+}
+
+.hy_listImg dl dd h2{
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  width: 94%;
+  overflow: hidden;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  -webkit-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  font-size: 1.4rem;
+  color: #333333;
+}
+
+.hy_listImg dl dd span{
+    position: absolute;
+    display: block;
+    bottom: 3px;
+    right: 1rem;
+    font-size: 1.3rem;
+    color:#666666;
+}
+
+.hy_listImg dl dd p{
+    font-size: 1.7rem;
+    color: #e6454a;
+    line-height: 3.5rem;
+    height: 3rem;
+}
+
+.hy_listImg dl dd p em{
+  font-size: 1rem;
+}
+
+.hy_listImg dl dd a{
+    font-size: 1.25rem;
+    line-height: 2rem;
+    color:#666666;
+}
+
+.hy_listImg dl dd a em{
+  color:#f7a157;
+}
+
+.hy_listImg dl dd img{
+    width: 2.45rem;
+    position: absolute;
+    right: 1rem;
+    bottom: 2.5rem;
+}
+
+/* 列表 结束*/
+
+
+.box-mask {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow-y: hidden;
+  background: rgba(0, 0, 0, 0.5);
+  top: 89px;
+  left: 0;
+  z-index: 9;
+  display: none;
+}
+.box-mask1 {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 71px;
+  left: 0;
+  z-index: 99;
+}
+.mask {
+  position: absolute;
+  width: 100%;
+  background: #fff;
+  z-index: 999;
+}
+
+.menu_2{
+    height: 360px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.mask>div{
+  width:50%;
+  float:left; 
+}
+
+.mask>div:nth-child(1){
+  background: #f7f7f7;
+}
+
+.mask ul {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  box-sizing: border-box;
+
+}
+.mask ul li {
+    -webkit-box-flex: 1;
+    border-bottom: 1px solid #ededed;
+    line-height: 45px;
+    height: 45px;
+    text-indent: 1rem;
+    font-size: 1.4rem;
+}
+
+.mask ul li a{
+  color:#000;
+  display:block;
+}
+
+.mask ul li.over{
+  background:#fff;
+  color:#000;
+}
+
+.mask ul li.pick{
+    background: #fff;
+    color: #52a2ed;
+    background-image: url(../images/check.png);
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 12%
+}
+
+.mask ul li.pick a{
+  color:#52a2ed;
+}
+
+.mask ul li a {
+  color: black;
+}
+
+.mask ul li:nth-child(1) i {
+  float: right;
+  color: #52A2ED;
+  display: none;
+}
+
+
+/**
+ *
+ * 下拉样式 Pull down styles
+ *
+ */
+#pullDown, #pullUp {
+  font-weight:bold;
+  font-size:14px;
+  color:#888;
+}
+.pullUpLabel{
+  display: block;
+  text-align: center;
+  font-weight: 500
+}
+
+#first>span{
+  text-align: center;
+    display: block;
+    line-height: 6rem;
+}
+
+
+
+
+
+
+

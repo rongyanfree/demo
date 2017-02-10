@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+    <title>分类列表</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link href="css/reset.css" rel="stylesheet"/>
+    <link href="css/bass.css" rel="stylesheet"/>
+    <script type="text/javascript" src="js/fontsize.js"></script>
+</head>
+<body>
+	<!--头部 header-->
+		<header>
+			<div class="header">
+				<i class="icon icon-return"></i>
+				<h1>分类列表</h1>
+                <a href="javascript:;" onclick="hoturn(this)"><i class="icon icon-addcommunity"></i></a>
+			</div>
+		</header>
+		<div style="height: 1.3rem;"></div>
+	<article class="classify-box clearfix">
+		<div class="classify-left fl" id="wrapper">
+			<div id="scroller">
+				<ul id="tab_btn"></ul>
+				<div style="height:1.4rem"></div>
+			</div>
+		</div>
+		<div class="classify-right" id="wrapper1">
+			<div id="scroller1">
+			  <ul>
+			     <!-- <li>
+			     	<h2>dddd</h2>
+			     	<div>
+			     		<a href=""></a>
+			     		<a href=""></a>
+			     		<a href=""></a>
+			     	</div>
+			     </li> -->
+			 </ul>
+		   </div>
+		</div>
+	</article>
+	<!-- 引入js资源 -->
+	<script type="text/javascript" src="js/zepto.min.js"></script>
+    <script type="text/javascript" src="../js/base.js"></script>
+	<script type="text/javascript">
+	//全局变量 用来标记默认选中项
+	var cid = getparam().cid||0;
+   //左侧栏
+   $('.classify-left').height($(window).height());
+   $('#scroller ul').height($(window).height() - 50);
+   //右侧栏
+   $('#scroller1 ul').height($(window).height());
+
+ // 搜索
+
+ function hoturn(obj){
+   window.location.href='seach.html';
+ }
+
+var test;
+function tree(a) {
+	this.tree = a || [];
+	this.groups = {};
+	this.init = function(pid) {
+		this.group();
+		return this.getsuns(pid);
+
+	};
+	this.group = function() {
+		for(var i = 0; i < this.tree.length; i++) {
+			if(this.groups[this.tree[i].pid]) {
+				this.groups[this.tree[i].pid].push(this.tree[i]);
+			} else {
+				this.groups[this.tree[i].pid] = [];
+				this.groups[this.tree[i].pid].push(this.tree[i]);
+			}
+		}
+	};
+	this.getsuns = function(id) {
+		var _this = this;
+		var l = this.groups;
+		var re = l[id];
+		$.each(re, function(i, n) {
+			if(l[n.id]) {
+				re[i].suns = l[n.id];
+				_this.getsuns(n.id);
+			}
+		});
+
+		return re;
+	}
+};
+$.post('/testback/fast/getTagList','',
+	function(data){
+		console.log(data)
+		var MallTag = data.MallTag;
+		test = new tree(MallTag).init(0);
+		var suns = test[0].suns;
+        classifty(suns);
+ /*       $('#scroller ul li').eq(cid).trigger('click');
+		$('#scroller ul li:nth-of-type(1)').addClass('pick');
+		$('#scroller1 ul li:nth-of-type(1)').attr('class','tab_content clearfix show');*/
+},'json');
+
+//左侧列表
+function classifty(suns) {
+	$.each(suns, function(i,n) {
+        $('<li onclick="showList(this,'+i+')"><a href="javascript:;">'+n.name+'</a></li>').appendTo('#tab_btn');
+        
+	});
+	//console.log(cid)
+	$('#tab_btn li').eq(cid).click();
+	//showsecond(cid);
+};
+
+
+//右侧列表
+function showsecond(i) {
+   //alert(i);
+	var suns1 = test[0].suns[i].suns||[];
+	$('#scroller1 ul').empty();
+	console.log(suns1)
+	$.each(suns1, function(i1,n1) {
+	 $('<li class="tab_content clearfix show"><h2 class="title">'+n1.name+'</h2><div class="small'+i1+'"></div></li>').appendTo($('#scroller1>ul'));
+
+	  //把点击列表的名称塞到历史记录
+	// history.pushState(null,null,location.href.split("?")[0] + "?" + n1.name);
+	
+	 var suns2 = n1.suns||[];
+	 $.each(suns2, function(i2, n2) {
+	 	//console.log(n2)
+	 	$('<a href="javascript:;" onclick="jumto(this)" data="'+n2.id+'"><i><img src="'+n2.icon+'"></i><span>'+n2.name+'</span></a>').appendTo($('.small'+i1));
+	});
+  });
+};
+
+
+//点击左栏列表 切换
+function showList(obj,i){
+   $(obj).addClass('pick').siblings().removeClass('pick');
+   $('#scroller1 ul li').eq($(obj).index()).attr('class','tab_content clearfix show').siblings().attr('class','tab_content clearfix');
+   //myScroll1.refresh();
+   //处理地址
+   history.replaceState(null, document.title, location.href.split("?")[0] + "?cid=" + i);
+   showsecond(i)
+};
+
+//跳转
+
+function jumto(obj){
+	window.location.href="classify_new_list.html?id="+$(obj).attr('data')+'&txt=4';
+}
+
+// 返回
+
+$('.icon-return').on('click',function () {
+	window.location.href  = 'index.html?customerid='+getCookie('customerid');
+	//javascript:history.go(-1);
+})
+  
+</script>
+</body>
+</html>

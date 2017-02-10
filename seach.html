@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>搜索</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" type="text/css" href="css/frozen.css">
+    <link rel="stylesheet" type="text/css" href="css/search.css">
+    <script type="text/javascript" src="js/fontsize.js"></script>
+    <style>
+        .ui-searchbar .ui-icon-search{
+
+        }
+        .demo-block{
+          height:1rem;overflow: hidden;
+        }
+        .ui-searchbar-wrap{
+            margin-top:0.15rem;border:1px solid #ddd;border-radius:0.5rem;height:0.8rem;
+        }
+        .ui-icon-search{
+          line-height: 0.8rem;line-height: 0.8rem;font-size: 1rem;background: #fff;
+          border-top-left-radius: 1rem;border-bottom-left-radius: 1rem;
+        }
+        .ui-searchbar-input{
+          background:#fff;
+          height:0.8rem;
+          line-height:0.8rem;
+          font-size: 0.4rem;
+        }
+        .ui-searchbar-input input{
+          border:none;width:100%;text-indent: 0.2rem;
+        }
+        .ui-searchbar-input{
+          height:0.8rem;
+        }
+        .ui-icon-close{
+          position: relative;
+          width: 1rem;
+          height: 0.8rem;
+        }
+        .ui-icon-close:before{
+          position: absolute;
+          height: 0.8rem;
+          line-height: 0.8rem;
+          font-size: 1.0rem;
+        }
+    </style>
+</head>
+<body>
+   <!--searchbar start-->
+          <div class="demo-block"> <!-- style="border-bottom:1px solid #ededed;" -->
+            <a href="javascript:history.go(-1)"><i class="icon icon-return"></i></a>
+            <div  class="ui-searchbar-wrap ui-border-b" style="width:87%">
+                <!--  <div class="ui-searchbar ui-border-radius"> -->
+                    <i class="ui-icon-search"></i>
+                    <!-- <div class="ui-searchbar-text">输入您需要的药品、疾病</div> -->
+                    <div class="ui-searchbar-input"><input value="" type="text" placeholder="输入您需要的药品、疾病" autocapitalize="off" autofocus="autofocus"></div>
+                    <i class="ui-icon-close" style="display:none"></i><button class="btn"></button>
+               <!--  </div> -->
+                
+            </div>
+        </div>
+        <!--searchbar end-->
+   <section class="hy-sech-history">
+     <div class="hy-seach">
+       <h2><span>热</span>热门搜索</h2>
+       <ul class="clear">   
+        <!-- <li>感冒咳嗽</li>
+        <li>呼吸疾病</li>
+        <li>安瑞克</li>
+        <li>皮肤擦伤</li> -->
+       </ul>
+     </div>
+     <div class="hy-history">
+      <h2><span>清空历史记录</span>历史记录</h2>
+      <ul>
+        <!-- <li>
+          <a href="javascript:;">婴儿感冒</a>
+          <a href="javascript:;">发烧咳嗽</a>
+        </li> -->
+      </ul>
+     </div>
+     <div class="hy_sech_list" style="display: none">
+        <ul>
+        </ul>
+     </div>
+  </section>
+</body>
+  <script type="text/javascript" src="js/zepto.min.js"></script>
+  <script type="text/javascript" src="js/base.js"></script>
+  <script type="text/javascript">
+  $(function(){
+ 	  $('.ui-searchbar-wrap').addClass('focus');
+    $('.ui-searchbar-input input').focus();
+    if($('.ui-searchbar-input input').val()){
+         $('.ui-icon-close').show();
+      }else{
+         $('.ui-icon-close').hide();
+      }
+  });
+
+  //点击文本框 x号 清空 输入内容
+  $('.ui-icon-close').on('click',function () {
+     $('.ui-searchbar-input input').val('');
+     $('.hy_sech_list ul').html('').parent().hide();
+     if($('.ui-searchbar-input input').val()!=''){
+         $('.ui-icon-close').show();
+      }else{
+         $('.ui-icon-close').hide();
+      }
+  });
+
+ /* $('.ui-searchbar-cancel').tap(function() {
+	  $('.ui-searchbar-wrap').removeClass('focus');
+	   window.location.href="index.html";
+	});
+  */
+  // 文本框 添加kenup事件
+  $('.ui-searchbar-input input').on('input',function(){
+      if($('.ui-searchbar-input input').val()){
+         $('.ui-icon-close').show();
+      }else{
+         $('.ui-icon-close').hide();
+      }
+      setTimeout(function(){
+        var vlue=$('.ui-searchbar-input input').val();
+        seach(vlue)
+      },300)
+  });
+
+  $('.btn').on('click',function(){
+    var v=$('.ui-searchbar-input input').val();
+    if ( v == '' ) {
+       return;
+    }else{
+      window.location.href='sech_details.html?searchStr='+v;
+    }
+    
+    setHistory(v); // 存储 cookie
+  });
+
+  // 热门搜索
+  /*$('.hy-seach ul li').live('click',function () {
+     window.location.href='sech_details.html?searchStr='+$(this).text();
+  });
+*/
+  function seach(v){
+    //console.log(v)
+    if(v!=""){
+       $.ajax({
+          type:'post',
+          url:'/testback/fast/getTagForSearch',
+          data:'info={name:"'+v+'"}',
+          dataType:'json',
+          success:function(data){
+            //console.log(data)
+            if (data.code == 0) {
+              if(data.names.length != 0){
+                $.each(data.names,function(i,b){
+                  $('<li onclick="t_url(this)">'+b+'</li>').appendTo($('.hy_sech_list ul'));
+                  $('.hy_sech_list').show();
+                });
+              }
+            } 
+          }
+        });      
+       }else{
+        $('.hy_sech_list').hide();
+      }
+  };
+
+  // 热门搜索
+  $.ajax({
+     type:'post',
+     url:'/testback/fast/getHotTag',
+     data:"info={size:'"+6+"'}",
+     dataType:'json',
+     success:function(data){
+       $.each(data.hottag,function(i,d){
+          $('<li onclick="t_url(this)">'+d.name+'</li>').appendTo($('.clear'));
+       });
+     }
+  });
+
+  var v=getCookie('keyWord');
+  console.log(v)
+//点击热门搜索 列表 
+  function t_url(obj){
+      var the_value=$(obj).text();
+      window.location.href='sech_details.html?searchStr='+$(obj).text();
+      setHistory(the_value); // 存储 cookie
+  };
+   var historyCount=6;
+  function setHistory(keyWord) { // 设置 搜索 历史 cookie 
+        var keyWords = getCookie('keyWord');
+        if (keyWords) {
+            if(keyWord) {
+                var keys = keyWords.split(",");
+                for (var i = keys.length - 1; i >= 0; i--) {
+                    if (keys[i] == keyWord) {
+                        keys.splice(i, 1);
+                    }
+                }
+                keys.push(keyWord);
+                if (keys.length >= historyCount) {
+                    //删除最开始的多余记录
+                    var count = keys.length - historyCount + 1; //需要删除的个数
+                    keys.splice(0, count); //开始位置,删除个数
+                }
+                setCookie('keyWord', keys.join(','), {expires: 365, path: '/'});
+            }
+        } else {
+            setCookie('keyWord', keyWord, {expires: 365, path: '/'});
+        }
+};
+
+function  getHistory(){ // 获取 cookie
+    var keyWords = getCookie('keyWord');
+    if(keyWords) {
+        var keys=  keyWords.split(",");
+        var length = keys.length;
+        if (length > 0) {
+            $(".hy-history ul").empty();
+            for (var i = length - 1; i >= 0; i--) {
+                $('<li><a onclick="t_url(this)">'+keys[i]+'</a></li>').appendTo($('.hy-history ul'));
+            }
+        }
+    }
+};
+getHistory();
+
+// 清空cookie
+ $('.hy-history h2 span').on('click',function () {
+     delCookie("keyWord",null,{path:"/",expires: -1});
+     $('.hy-history ul').html('');
+ });
+
+
+  </script>	
+</html>

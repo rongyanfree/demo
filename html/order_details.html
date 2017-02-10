@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>申请退款</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="../css/drawback.css">
+
+</head>
+<body>
+  <header>
+	<div class="header">
+	  <a href="javascript:history.go(-1)"><i class="back"></i></a>
+	  <span>申请退款</span>
+	</div>
+  </header>	
+  <div class="wrap_conter">
+     <div class="wrap_conter_t">
+     <!-- <p>暂无物流信息</p> -->
+     </div>
+     <div class="wrap_conter_as">
+     </div>
+     <div class="wrap_conter_sl">
+        <div>
+        </div>
+     </div>
+
+    <div class="wrap_content_zf">
+    </div>
+
+    <div class="wrap_content_wl">
+    </div>
+
+    <div class="wrap_footer">
+        <div class="wrap_f_btn" style="display: none">
+            <p><button class="buy">再次购买</button><i class="del">删除</i></p>
+        </div>
+
+        <div class="wrap_f_btn1" style="display: none">
+            <p><button id="cancel" class="del" status="20">取消订单</button><button>立即支付</button></p>
+        </div>
+
+        <div class="wrap_f_btn2" style="display: none">
+            <p><button id="button" class="buy">再次购买</button><button status="50" class="del">确认收货</button></p>
+        </div>
+    </div>
+  </div>
+  <script src="/js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/mall.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/base.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+    var orderid=getparam().orderid;//订单号
+    var customerid=getparam().customerid;//用户id
+    console.log(orderid)
+       $.ajax({
+              type:"post",
+              url:'/testback/prdOrder/getOrderInfo',
+              data:'info={orderid:"'+orderid+'"}',
+              datatype:'json',
+              success:function(data) {
+                console.log(data)
+                if(data.code == 0){
+                   List(data)
+                }
+              }
+        });
+      
+      //状态
+      function status(s){
+       if(s == 10 ){
+         $('.wrap_f_btn1').show();
+         return '待付款';
+       } else if (s == 20) {
+        $('.wrap_f_btn').show();
+         return '订单取消';
+       } else if (s == 30) {
+        $('.wrap_f_btn2').show();
+         return '待收货';
+       } else if (s == 40) {
+         $('.wrap_f_btn').show();
+         return '已完成';
+       } else if (s == 50) {
+         return '已删除';
+       } 
+    };
+
+    //退款
+
+    function retu(obj){
+       var orderid = $('.wrap_conter_t p').attr('orderid');
+       var refundmoney=$('.wrap_content_wl p i em').text();
+       var num=$('.wrap_conter_sl>div dl').length;
+       var status=$(obj).attr('status');
+
+       if($(obj).attr('status') == 0){
+         window.location.href='drawback.html?orderid='+orderid+'&status='+status;
+
+       }else if ( $(obj).attr('status') == 3) {
+
+        window.location.href='refund_reason.html?orderid='+orderid +'&customerid='+customerid+'&refundmoney='+refundmoney+'&status='+status+'&refundnumber='+num;
+       }   
+    };
+
+    //再次购买
+    function buy(obj){
+      var prdid = $(obj).attr('prdid');
+      console.log(customerid+','+prdid)
+       $.ajax({
+           type:'post',
+           url:'/testback/prdCart/addGoodsInCart',
+           data:'info={customerid:"'+customerid+'",prdid:"'+prdid+'",number:1}',
+           datatype:'json',
+           success:function (data) {
+             if(data.code == 0 ){
+                console.log(data);
+                // 跳转至 购物车
+             }
+           }
+       })
+     };
+
+     $('.buy').on('click',function(){
+         $.ajax({
+           type:'post',
+           url:'/testback/prdOrder/goodsBuyAgain',
+           data:'info={customerid:"'+customerid+'",orderid:"'+orderid+'"}',
+           datatype:'json',
+           success:function (data) {
+             if(data.code == 0 ){
+                console.log(data);
+                // 跳转至 购物车
+             }
+           }
+       })
+     });
+
+      function List(obj){
+        // 订单信息
+        $.each(obj.order,function(i,d){
+            console.log(d);
+            if(d.invoiceid == 0){
+              var t='不开发票';
+            }else{
+              var t=d.head;
+            }
+            if(d.status != 10){
+              $('.wrap_conter_sl dl dd button').show();
+            }
+            $('<h2><button id="cancel" class="refund" style="color:#666666" onclick="retu(this)">申请退款</button>自营</h2>').appendTo('.wrap_conter_sl>div');
+            if(d.refundstatus == 3){
+             //$('.refund').show().text('申请退款').attr('status',3);
+            }else if (d.refundstatus == 0){
+             $('.refund').show().text('查看退款').attr('status',0); 
+            }
+            $('<p orderid='+d.orderid+' customerid="'+d.customerid+'"><span>'+status(d.status)+'</span><i>订单号：'+d.orderid+'</i></p>').appendTo('.wrap_conter_t');
+
+            $('<p><i>'+d.receivename+'</i>'+d.receivemobile+'</p><span>'+d.receivearea+d.receiceaddress+'</span>').appendTo('.wrap_conter_as');
+
+            $('<ul><li><span>￥'+d.chargemoney+'.00</span>商品总额</li><li><span>+￥'+d.fare+'.00</span>运费</li></ul><p>订单金额：<i>￥<em>'+d.actualmoney+'</em>.00</i></p><span>下单日期：'+d.ordertime+'</span>').appendTo('.wrap_content_wl');
+
+            $('<ul><li><span>微信支付</span>支付方式</li><li><span>物流配送</span>送货方式</li><li><span>'+t+'</span>发票信息</li></ul>').appendTo('.wrap_content_zf');
+        }); 
+
+        // 商品列表
+        $.each(obj.matlist,function(i,d){
+           $('<dl><dt style="background-image:url('+d.imgurl+')"></dt><dd><p class="clear"><em>'+d.prdname+'</em><span>¥'+d.onematmoney+'.00</span></p> <i><button onclick="buy(this)" prdid="'+d.prdid+'" style="display:none">再次购买</button>*'+d.number+'</i></dd></dl>').appendTo('.wrap_conter_sl>div')
+        });  
+    };
+      //删除订单
+      $('.del').on('click',function(){
+        var status=$(this).attr('status');
+        if( status == 20 || status == 50 || status == 40){ // 删除 取消 确认收货
+         $.post('/testback/prdOrder/updateOrderStatus','info={orderid:"'+orderid+'",status:"'+status+'"}',function (data) {
+             if(data.code == 0 ){
+                window.location.href = 'order_list.html';
+             }
+          });
+         }
+      });
+  </script>
+</body>
+</html>
+
+      
+              
+                 
+                
+              
+           
+
+
+           
+           
+           
+        
+
+           
+        
+        
+        
+
+
+

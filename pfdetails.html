@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>疗程套餐</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<link href="css/reset.css" rel="stylesheet"/>	
+  <link rel="stylesheet" href="css/iconfont.css">
+	<link rel="stylesheet" type="text/css" href="css/pfdetails.css"/>
+	<link rel="stylesheet" type="text/css" href="css/swiper-3.3.1.min.css"/>
+
+	<script type="text/javascript" src="js/fontsize.js"></script>
+</head>
+<body>
+  <!--头部 header-->
+  <header>
+  	<div class="header">
+  		<i class="icon icon-return"></i>
+  		<h1 class="cl">疗程套餐</h1>
+      <em class="fenxiang"></em>
+  	</div>
+  </header>
+  <div style="height:46px;"></div>
+  <section>
+    <div class="ceshi"></div>
+    <!-- <p style="height: .2rem;background:#f7f7f7;"></p>
+    <div class="ceshi"></div> -->
+    <div class="price">
+     <!--  <p class="oldprice">原来价格</p>
+     <p class="nowprice">现在价格</p> -->
+    </div>
+    <div class="zm">
+      <span>正品保证</span>
+      <span>满<i>0</i>元包邮</span>
+    </div>
+    <p style="height: .2rem;background:#f7f7f7;"></p>
+  <!--图文详情-->
+  <div class="hy_pickList">
+  <div class="hy_list">
+   <ul class="cl">
+     	 <li class="over">图文详情</li>
+     	 <li>规格参数</li>
+     </ul>
+   <div class="hy_Img">
+   	 <!-- <img src="images/shop_13.jpg"> -->
+   </div>
+  </div>
+  <div class="hy_stand"   style="display:none">
+    
+  </div>
+  </div>
+  </section>
+  <footer class="hy_ft">
+  	<ul>
+  		<li>
+  		  <img src="images/shop_17.jpg">
+  		  <a href="tel:4006070099">客服</a>
+  		</li>
+  		<li style="position: relative;" onclick="shop(this)">
+  		    <img src="images/shop_19.jpg">
+  			  <a href="javascript:;">购物车</a>
+          <i class="num"></i>
+  		</li>
+  		<li class="add">加入购物车</li>
+  		<li onclick="shop(this)" id="purchase">立即购买</li>
+  	</ul>
+  </footer>
+  <!-- <div class="bottom_fenxiang">
+    <ul>
+      <li><img src=""/><span>微信好友</span></li>
+      <li><img src=""/><span>胖友圈</span></li>
+      <li><img src=""/><span>QQ好友</span></li>
+      <li><img src=""/><span>QQ空间</span></li>
+      <li><img src=""/><span>新浪微博</span></li>
+      <li><img src=""/><span>腾讯微博</span></li>
+      <li><img src=""/><span>短信</span></li>
+    </ul>
+    <input type="buttom" value="取消"/>
+  </div> -->
+<script src="js/zepto.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="../js/base.js"></script>
+<script>
+   var mipa,customerid;
+   var customerid1 = getparam().customerid;
+   var customerid2 = getCookie('customerid');
+ 
+   mipa = getCookie('url'); 
+   if ( customerid1 == (null)) {
+        customerid1 = '';
+        setCookie('customerid',customerid1);
+   }
+
+   if (customerid1) {
+         customerid = customerid1;
+         setCookie('customerid',customerid1);
+   }
+
+   if (customerid2) { 
+       customerid = customerid2;
+       setCookie('customerid',customerid2);
+  }
+
+
+   var nav_lis=$('.hy_list ul li');
+   var address = location.href;// url
+   $('.num').text(getparam().num);
+   //图文 规格 table  切换
+   nav_lis.on('click',function () {
+      $(this).addClass('over').siblings().removeClass('over');
+      if($(this).index()==0){
+         $('.hy_stand').hide();
+         $('.hy_Img').show();
+      }else{
+         $('.hy_stand').show();
+         $('.hy_Img').hide();
+      }
+   });
+
+
+ //点击购物车
+  function shop(obj){
+    if($(obj).text() == '立即购买'){
+      var prdid = $(obj).attr('data');
+      var num = $(obj).attr('num');
+      var price = $('.hy_detail>p span').eq(0).attr('price');
+      if( customerid) {
+            
+           location.href = '/order/html/order.html?prdid='+prdid+'&price='+price+"&num=1";
+       
+         } else if( customerid == null || typeof(customerid) == undefined || customerid == 'none' || customerid == '') {
+
+           location.href = 'oasis://login?url='+address+'&';
+      }
+
+    } else {
+
+        if( customerid ){
+            window.location.href='/order/purchase.html?customerid='+customerid+'&sectionsid='+getparam().sectionsid+'&txt='+getparam().txt+'&section='+getparam().section;
+
+          }else if( customerid == null || customerid == 'undefined' || customerid == 'none' || customerid == '') {
+
+               location.href = 'oasis://login?url='+address+'&';
+          }
+            
+       }
+  };   
+   var prdid = getparam().prdid;
+   $.ajax({
+        type : "post",
+        url : "/testback/fast/getMatfromAct ",
+        data :"info={prdid:"+prdid+"}",
+        success : function(data){
+          console.log(data)
+         if(data.code == 0 ){
+           //规格参数
+           $.each(data.declares,function(n,b) {
+              var index=$.trim(b.declares).replace(/：/ig,':').split(':');
+              if(n == 0){
+                 $('<table><tr><th colspan="3">请仔细阅读产品说明书并按说明使用</th></tr></table>').appendTo($('.hy_stand'));
+              }else{
+                $('<tr><td class="t">'+index[0]+'</td><td>'+index[1]+'</td></tr>').appendTo($('.hy_stand table'));
+              }
+           });  
+             
+           // 商品 名称  价格 
+           $('.add').attr('data',data.prdMat.prdid);
+           $('#shop').attr('data',data.prdMat.prdid);
+           $('#purchase').attr('data',data.prdMat.prdid);
+           
+           if(data.sections == undefined){
+              $(".price").append("<p class='oldprice'>市场价：¥"+data.prdMat.price+"</p><p class='nowprice'>优惠价：<em>¥"+data.prdMat.nowprice+"</em></p>")
+           }else{
+              if(data.sections.type=="2"){
+                $(".price").append("<p class='oldprice'>市场价：¥"+data.prdMat.price+"</p><p class='nowprice'>优惠价：<em>¥"+data.discountprice+"</em></p>")
+              }else if(data.sections.type=="3"){
+                $(".price").append("<p class='oldprice'>市场价：¥"+data.prdMat.price+"</p><p class='nowprice'>优惠价：<em>¥"+data.sections.price+"</em></p>")
+              }
+            }
+            
+           $(".ceshi").append("<img src='"+data.prdMat.picture+"' style='width:100%;'/><p style='height:0.2rem;background:#f7f7f7'></p><img src='"+data.bannerimg[0].imgurl+"' style='width:100%;'/>");
+        
+           //图文
+           $.each(data.declaresimg,function(n,b){
+              $('<img src="'+b.imgurl+'">').appendTo($('.hy_Img'));
+           });
+           //分享
+            /*var isapp = getBrowser().isapp;
+            if(isapp){
+              $('.fenxiang').css('display','inline').on('click',function(){
+                location.href = 'oasis://share&&&' + encodeURIComponent(data.prdMat.name) + '&&&' + encodeURIComponent(data.prdMat.prddesc) + '&&&' +encodeURIComponent(location.href) + '';
+              })
+            }*/
+            $('.fenxiang').share(data.prdMat.name,data.prdMat.applisymp,location.href);
+          }
+        }
+    });
+    //包邮接口
+    $.post('/testback/prdOrder/getFullCut',function(data){
+      $('.zm i').text(data.prdFullcut.fullcut);
+     },'json');
+   // 获取 购物车 数量
+   if(customerid != undefined){
+     setTimeout(function(){
+       $.post('/testback/prdCart/getCustomerCartCountList','info={customerid:"'+customerid+'"}',function(data){
+          console.log(data)
+         $('#purchase').attr('num',data.count);
+         if(data.code == 0){
+           if( data.count != 0){
+             $('.num').text(data.count).show();
+           } 
+         }
+      },'json');
+     },500)
+   }
+
+    //返回
+    $('.icon-return').on('click',function () {
+      javascript:history.back();
+    })
+
+       //加入购物车
+ $('.add').on('tap',function () {
+
+    var prdid = $(this).attr('data');
+    var n=$('.num').text();
+    if ( customerid ) {
+       $.ajax({
+        type : "post",
+        url : "/testback/prdCart/addGoodsInCart", // 请求的地址
+        data :"info={customerid:'"+customerid+"',prdid:'"+prdid+"',number:1}",
+        dataType : "json",
+        success : function(data){
+           console.log(data)
+           if(data.code == 0) { 
+              n++;
+              $('.num').text(n).show(); 
+           }
+        }
+      });  
+    } else if ( customerid == null || customerid == 'undefined' || customerid == 'none' || customerid == '') {
+       location.href = 'oasis://login?url='+address+'&';
+    }
+});
+
+</script>
+</body>
+</html>

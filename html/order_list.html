@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>订单列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="../css/drawback.css">
+  <script type="text/javascript" src="/js/rem(750).js"></script>
+</head>
+<body>
+  <header>
+	<div class="header">
+	  <i class="back" onclick="back()"></i>
+	  <span>订单列表</span>
+	</div>
+  </header>	
+  <div class="wrap">
+      <div class="wrap_nav">
+         <ul class="clear">
+          <li class="over"><a href="javascript:;">全部</a></li>
+          <li><a href="javascript:;">处理中</a></li>
+          <li><a href="javascript:;">已完成</a></li>
+         </ul>
+      </div>
+      
+      <div class="wrap_order">
+         <!--全部-->
+         <div class="wrap_all">
+         </div> 
+         <!--完成-->
+         <div class="wrap_no" style="display: none">
+           <dl>
+             <dt><img src="../images/no.png" /></dt>
+             <dd>
+                <p>您暂时还没有任何订单 到商城首页去看看吧！</p>
+                <a href="index.html">随便看看</a>
+             </dd>
+           </dl>
+       </div>
+  </div>
+  <script src="/js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/mall.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/touch.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/base.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+     var navLi=$('.wrap_nav ul li');
+     var customerid=getparam().customerid //用户id
+     //点击 table 切换
+     navLi.on('click',function () {
+       $(this).addClass('over').siblings().removeClass('over');
+       //$('.wrap_order>div').eq($(this).index()).show().siblings().hide();
+        order($(this).index())
+     });
+
+     // 订单列表
+    function order(i){
+          $.ajax({
+              type:"post",
+              url:'/testback/prdOrder/getCustomerOrderList',
+              data:'info={customerid:"'+customerid+'",status:"'+i+'"}',
+              datatype:'json',
+              success:function(data) {
+                //console.log(data)
+                if(data.code == 0){
+                   if(data.datalist.length == 0){
+                     $('.wrap_all').hide();
+                     $('.wrap_no').show();
+                   }
+                 orderList(data.datalist)
+                }
+              }
+            })
+     };
+
+     // 查看详情
+
+     function detaiList(obj){
+       var orderid=$(obj).parent().parent().attr('orderid');
+       window.location.href='order_details.html?orderid='+orderid+'&customerid='+customerid;
+     };
+
+     //列表 html
+
+     function html(d){
+       $('<div class="wrap_order_list" customerid="'+d.customeridstr+'" orderid="'+d.orderid+'"><div class="clear"><div><p><i>'+d.ordertime+'</i><span>'+status(d.status)+'</span></p><span class="color1">订单号：'+d.orderid+'</span></div><em onclick="detaiList(this)">￥'+d.actualmoney+'</em></div><div class="wrap_con clear"><ul class="clear"></ul><p style="display:none">...</p></div>'+status1(d.status)+'</div>').appendTo($('.wrap_order>div').eq(0));
+     };
+
+     // 列表
+     function orderList(obj){
+       $('.wrap_all').empty();
+       $.each(obj,function(i,d){
+         if(d.prdMats.length > 1){
+            html(d)
+            $('.wrap_con ul').empty();
+            $.each(d.prdMats,function (n,m) {
+              $('<li style="background-image: url('+m.imgurl+');"></li>').appendTo($('.wrap_con ul'));
+            });
+            if($('.wrap_con clear ul li').length > 4){
+              $('.wrap_con>p').show();
+           };
+         }else{
+          //console.log(d.prdMats)
+          $('<div class="wrap_order_list" customerid="'+d.customeridstr+'" orderid="'+d.orderid+'"><div class="clear"><div><p><i>'+d.ordertime+'</i><span>'+status(d.status)+'</span></p><span class="color1">订单号：'+d.orderid+'</span></div><em onclick="detaiList(this)">￥'+d.actualmoney+'</em></div><div class="clear mall"></div>'+status1(d.status)+'</div>').appendTo($('.wrap_order>div').eq(0));
+
+           $('.mall').empty();
+           $.each(d.prdMats,function (n,m) {
+            console.log(m)
+            $('<dl class="clear" prdid="'+m.prdid+'"><dt style="background-image:url('+m.imgurl+')"></dt><dd><p>'+m.name+'</p><span>*'+m.number+'</span></dd></dl>').appendTo($('.mall'));
+          });
+         };
+         
+
+       });
+
+     };
+
+     // 状态
+     function status(s){
+       if(s == 10 ){   
+         return '待付款';
+       } else if (s == 20) {
+         return '订单取消';
+       } else if (s == 30) {
+         return '待收货';
+       } else if (s == 40) {
+         return '已完成';
+       } else if (s == 50) {
+         return '已删除';
+       } 
+     };
+     // 按钮状态
+     function status1(s){
+       if(s == 10 ){  
+         var html = '<div class="wrap_btn"><a href="javascript:;" class="btn clear"><button id="cancel" onclick="tj(this)" status="20">取消订单</button><button id="pay">立即支付</button></a></div>'; 
+         return html;
+       } else if (s == 20) {
+         var html = '<div class="wrap_btn"><a href="javascript:;" class="btn clear"><button id="cancel" onclick="tj(this)" status="50">删除订单</button><button id="pay" onclick="tj(this)">再次购买</button></a></div>' 
+         return html;
+       } else if (s == 30) {
+         var html = '<div class="wrap_btn"><a href="javascript:;" class="btn clear"><button id="cancel" onclick="tj(this)" style="display:none">查看物流</button><button id="pay" onclick="tj(this)" status="40">确认收货</button></a></div>' 
+         return html;
+       } else if (s == 40) {
+         var html = '<div class="wrap_btn"><a href="javascript:;" class="btn clear"><button id="pay" onclick="tj(this)">再次购买</button></a></div>' 
+         return html;
+       } /*else if (s == 50) {
+         return '已删除';
+       } */
+     };
+
+     // 删除 取消订单 
+
+     function remove(orderid,status){
+        $.ajax({
+              type:"post",
+              url:'/testback/prdOrder/updateOrderStatus',
+              data:'info={orderid:"'+orderid+'",status:"'+status+'"}',
+              datatype:'json',
+              success:function(data) {
+                console.log(data)
+                if(data.code == 0){
+                  location.reload();
+                }
+              }
+          })
+     };
+
+     //返回
+
+     function back(){
+        window.location.href='/medicine/index.html';
+     };
+
+     //再次购买 
+
+     function buy(orderid){
+       $.ajax({
+           type:'post',
+           url:'/testback/prdOrder/goodsBuyAgain',
+           data:'info={customerid:"'+customerid+'",orderid:"'+orderid+'"}',
+           datatype:'json',
+           success:function (data) {
+             if(data.code == 0 ){
+                window.location.href='/order/purchase.html?customerid='+customerid;
+             }
+           }
+       })
+     };
+
+     // 按钮点击
+     function tj(obj){
+       var status=$(obj).attr('status');
+       var orderid=$(obj).parent().parent().parent().attr('orderid');
+       if(status == 20 || status == 50 || status == 40){ // 删除 取消 确认收货
+          remove(orderid,status);
+          return;
+       } else if ( $(obj).text() == '再次购买' ) {
+           buy(orderid)
+       }
+     };
+
+  order(0)
+  </script>
+</body>
+</html>
+                 
+                  
+              
+               
+                  
+                  
+                     
+                     
+                  
+               
+              
+                  
+                     
+                     
+                  
+              
+          

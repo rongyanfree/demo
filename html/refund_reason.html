@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>申请退款</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="../css/drawback.css">
+  <script type="text/javascript" src="/js/rem(750).js"></script>
+</head>
+<body>
+  <header>
+	<div class="header">
+	  <a href="javascript:history.go(-1)"><i class="back"></i></a>
+	  <span>申请退款</span>
+	</div>
+  </header>	
+  <div class="hy_wrap">
+     <div class="wrap_reson">
+        <h2>退款原因</h2>
+        <ul>
+           <li><span class="pick"></span>买错了</li>
+           <li><span></span>试过了，不太满意</li>
+           <li><span></span>衣服太小</li>
+           <li><span></span>衣服太大,不合适</li>
+        </ul>
+     </div>
+     <div class="wrap_mony">
+        <h2>退款金额</h2>
+        <p>现金：<i> 89.00</i>元</p>
+     </div>
+     <div class="wrap_account">
+         <h2>退款说明<span>(可不填)</span></h2>
+         <textarea placeholder="请输入退款说明"></textarea>
+     </div>
+     <div class="wrap_foot">
+        <p>如您已经收到货，请先确认收货</p>
+        <a href="javascript:;"><button>申请退款</button></a>
+     </div>
+  </div>
+  <script src="/js/zepto.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/mall.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/base.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+       var orderid = getparam().orderid;
+       var customerid=getparam().customerid;
+       var refundmoney=getparam().refundmoney;
+       var refundnumber=getparam().refundnumber;
+       var status=0;
+       var len = $('.wrap_reson ul li span');
+       len.on('click',function () {
+          show(this)
+       })
+       $('.wrap_mony p i').text(refundmoney);
+    //input
+    function show(obj){
+       $(obj).parent().siblings().find('span').removeClass('pick');
+       if ($(obj).hasClass('pick')) {
+          $(obj).removeClass('pick')
+       }else {
+          $(obj).addClass('pick')
+       }
+    }
+
+    // 退款
+
+    $('.wrap_foot a button').on('click',function () {
+         var comment = $('.wrap_account textarea').val();
+         var reason = $('.pick').parent().text();
+         var goodsList = '';
+         var imgurl = '';
+         var refundtype = 0;
+         var refundcard = '';
+         //console.log(orderid+','+customerid+','+refundmoney+','+status+','+goodsList+','+comment+','+reason+','+imgurl+','+refundtype+','+refundcard);
+        $.ajax({
+            type:'post',
+            url:'/testback/prdOrder/orderRefund',
+            data:'info={orderid:"'+orderid+'",customerid:"'+customerid+'",refundmoney:"'+refundmoney+'",status:"'+status+'",goodsList:"'+goodsList+'",comment:"'+comment+'",reason:"'+reason+'",imgurl:"'+imgurl+'",refundtype:"'+refundtype+'",refundcard:"'+refundcard+'",refundnumber:"'+refundnumber+'"}',
+            dataType:'json',
+            success:function (data) {
+              if(data.code == 0){
+                 window.location.href='drawback.html?orderid='+orderid;
+              }
+            }
+        })
+    })
+  </script>
+</body>
+</html>

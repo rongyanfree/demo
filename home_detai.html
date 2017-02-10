@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+	<head>
+
+		<meta charset="UTF-8">
+
+		<title>秋季专题</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<meta name="format-detection" content="telephone=no">
+
+		<link rel="stylesheet" type="text/css" href="css/home_detai.css">
+		<link rel="stylesheet" type="text/css" href="css/iconfont.css">
+		<link rel="stylesheet" type="text/css" href="css/frozen.css">
+
+		<script type="text/javascript" src="js/fontsize.js"></script>
+	</head>
+	<body>
+		<!--头部 header-->
+		<header>
+			<div class="header">
+				<i class="icon icon-return"></i>
+				<h1>秋季专题</h1>
+				<div class="list listnone"></div>
+			</div>
+		</header>
+		<div style="height:1.3rem;"></div>
+		<section>
+			<div class="hy_menu_list">
+				<ul class="cl ulTop">
+				</ul>
+				<div class="fix"><img src="images/daojiao.png"/></div>
+				
+			</div>
+			<div class="cover">切换栏目</div>
+			<a href="javascript:;" class="hy_img"></a>
+			<div class="hy_cont_img">
+			</div>
+		</section>
+		<script src="js/zepto.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="../js/base.js"></script>
+		<script type="text/javascript">
+			$.ajax({
+				type: 'post',
+				url: '/testback/fast/getSectionsDeatail',
+				data: "info={sectionsid:'" + getparam().sectionsid + "'}",
+				dataType: 'json',
+				success: function(data) {
+					console.log(data)
+					$('title').text(data.mallSections[0].name);
+					$('.header h1').text(data.mallSections[0].name);
+					$.each(data.mallSections, function(i, d) {
+						$('.hy_img').css({'background-image':'url('+d.imgurl+')'});
+						var len = d.prdMallSections.length;
+						if (len==0){$('.hy_cont_img').html('<h3 style="text-align: center">一定是小编偷懒了,这个活动没商品</h3>')}
+						$.each(d.prdMallSections, function(n, b) {
+							//展示 列表							
+							$('<div class="cl small" id="second' + n + '_content"></div>').appendTo($('.hy_cont_img'));
+							if (len > 0) {
+								$('.hy_menu_list').show();
+								$('<li id="second' + n + '" onclick="scrot(this)" class="clear"><i class="dingwei"></i><a href="javascript:;">' + b.name + '</a></li>').appendTo($('.hy_menu_list ul'));
+								//----
+								$('<li id="msecond' + n + '" onclick="scrot0(this)" class="clear aLi"><a href="javascript:;">' + b.name + '</a></li>').appendTo($('.list'));
+								$('<h2>' + b.name + '</h2>').appendTo($('.small').eq(n))
+
+							}	
+								
+							$.each(b.prdMallSections, function(a, x) { 
+
+								if ( x.nowprice == undefined ) {
+									x.nowprice = 0;
+								};
+								if ( x.price == undefined ) {
+									x.price = 0;
+								}
+
+								if (x.type == 2) {
+
+									var num = x.discount * Number(10);
+                                    var price = Number(x.price) * Number(x.discount);
+
+									$('<dl><dt style="background-image:url(' + x.imgurl + ')"></dt><dd><h3>' + x.name + '</h3><p>￥' + price.toFixed(2) + '<em style="text-decoration:none;font-size:.35rem">' + (x.discount * 10).toFixed(1) + '折</em></p><a data="' + x.sectionsid + '" onclick="jumto(this)">马上抢</a></dd></dl>').appendTo($('.small').eq(n));
+
+								} else if (x.type == 3) {
+
+									$('<dl><dt style="background-image:url(' + x.imgurl + ')"></dt><dd><h3>' + x.name + '</h3><p>￥' + x.nowprice + '<em>￥' + x.price + '</em></p><a data="' + x.sectionsid + '" onclick="jumto(this)">马上抢</a></dd></dl>').appendTo($('.small').eq(n));
+
+								}
+
+							});
+
+						});
+
+						$('.hy_menu_list ul li').eq(0).attr('class', 'over')
+
+						/*} else {
+
+                 
+
+          	  	  $('<div class="cl small"><h2>'+b.name+'</h2></div>').appendTo($('.hy_cont_img'));
+
+                   $.each(b.prdMallSections,function(a,x){
+
+                       $('<dl><dt style="background-image:url('+x.imgurl+')"></dt><dd><h3>'+x.name+'</h3><p>￥'+x.price+'<em>￥'+b.nowprice+'</em></p><a data="'+x.sectionsid+'">马上抢1</a></dd></dl>').appendTo($('.small').eq(n))
+
+                   });*/
+
+					})
+					//===	
+					var j=$(".ulTop").children().length;
+					console.log(j)
+					var ulWidth=0,liWidth=0;
+					var padWidth = 14*j*2;
+					for(var i=0;i<j;i++){
+						liWidth = $(".ulTop li").eq(i).width();
+						ulWidth = ulWidth + liWidth;
+					}
+					ulWidth = ulWidth + padWidth+1;
+					$(".hy_menu_list>ul").css({"width":ulWidth});
+					
+					$("li i").css('display','none');
+					$(".ulTop li").eq(0).find("i:first-child").css('display','block');
+					//====点击下拉列表里的li
+					$(".list li").on("click",function(){
+						$(".list").addClass("listnone");
+						$(".cover").css("display","none");
+						//---
+						var index = $(this).index();
+						$(".ulTop li").eq(index).addClass('over').siblings().removeClass('over');
+						$("li i").css('display','none');
+						$(".ulTop li").eq(index).children().css('display','block');
+						var h = $(".ulTop li").eq(index).prev().width();
+						console.log(h)
+						var num = $(".ulTop li:lt("+index+")").length;
+						var bfWidth = 0;
+						for(var i = 0;i<num-1;i++){
+							bfWidth += $(".ulTop li").eq(i).width()//点击的li的以前元素的宽度和
+						}
+						$(".hy_menu_list").scrollLeft(bfWidth)
+					})
+					//--点击横排列表里的li
+					$(".ulTop li").click(function(){
+						var index = $(this).index();
+						var num = $(".ulTop li:lt("+index+")").length;//点击的li的以前元素的长度
+						var bfWidth = 0;//
+						for(var i = 0;i<num-1;i++){
+							bfWidth += $(".ulTop li").eq(i).width()//点击的li的以前元素的宽度和
+						}
+						$(".hy_menu_list").animate({
+							scrollLeft: bfWidth
+						}, 300);
+					})	
+					$( window ).scroll(function() {
+					  $(".list").addClass("listnone");
+					  $( ".cover" ).css( "display", "none" );
+					})
+				}
+
+			});
+
+			var topMain = $("header").height() - 50 //是头部的高度加头部与nav导航之间的距离
+
+			var nav = $(".hy_menu_list");
+
+			$(window).scroll(function() {
+
+				if ($(window).scrollTop() > topMain) { //如果滚动条顶部的距离大于topMain则就nav导航就添加类.nav_scroll，否则就移除
+
+					nav.addClass("nav_scroll");
+
+				} else {
+
+					nav.removeClass("nav_scroll");
+
+				}
+
+			});
+
+			function jumto(obj) { //马上抢
+			  var sectionsid = $(obj).attr('data');
+			  var section = getparam().sectionsid;
+				window.location.href = 'details.html?sectionsid=' + sectionsid + '&txt=1' +'&section='+section +"&num=0";	
+			};
+
+
+			//点击横向ul里的li
+			function scrot(obj) {
+
+				$(obj).addClass('over').siblings().removeClass('over');
+
+				var cls = $(obj).attr('id');
+				var h = $('#' + cls + '_content').offset().top - $('.hy_img').height() + 20;
+			//	console.log(h)
+				$('html,body').animate({
+					scrollTop: h
+				}, 500);
+				//=====
+				$("li i").css('display','none');
+				$(obj).children().css('display','block');
+			};
+			//===点击下拉的ul里的li
+			function scrot0(obj) {
+				var cls = $(obj).attr('id').split("m")[1];
+				var h = $('#' + cls + '_content').offset().top - $('.hy_img').height() + 20;
+				$('html,body').animate({
+					scrollTop: h
+				}, 500);
+				//=====
+				$("li i").css('display','none');
+				$(obj).children().css('display','block');
+			};
+			
+			//z返回
+
+			$('.icon-return').on('click',function () {
+				 location.href = 'index.html?customerid='+getCookie('customerid');
+			})
+
+			//==下拉菜单的弹出和隐藏
+			$(".fix").on("click",function(){
+				if($(".list").hasClass("listnone")){
+					$(".list").removeClass("listnone");
+					$(".cover").css("display","block");
+				}else{
+					$(".list").addClass("listnone");
+					$(".cover").css("display","none");
+				}
+			})
+
+			
+		</script>
+
+	</body>
+
+</html>

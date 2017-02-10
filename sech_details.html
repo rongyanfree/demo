@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/new_list.css"/>
+		<link rel="stylesheet" type="text/css" href="css/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="css/swiper-3.3.1.min.css"/>
+		<title>新列表</title>
+	</head>
+	<body>
+		<div class="wrap">
+			<header>
+				<div class="hea-left" onclick="back(this)">
+					<a href="javascript:history.go(-1)"><i class="icon iconfont">&#xe702;</i></a>
+				</div>
+				<div class="hea-center">
+					<div>
+						<input type="text"  value=""  class="hea-inp" readonly="readonly"/>
+						<!-- <img src="images/del.jpg" /> -->
+					    <!-- <span></span> -->
+					</div>
+				</div>
+				<div class="hea-right">
+				    <span>
+				       <img class="shop_car" src="images/new_list_05.jpg" alt="" />
+				       <i style="display: none"></i>
+				    </span>
+					<a href="classify.html"><img class="menu" src="images/new_list_07.jpg" alt="" /></a>
+				</div>
+			</header>
+			<nav>
+				<ul>
+					<li onclick="Price_Sorted(this)" data="1" class="hy_price">价格
+						<img class="price-top" src="images/new_list_13.jpg" alt="" />
+						<img class="price-down" src="images/new_list_16.jpg"/>
+					</li>
+					<li onclick="Sales_Order(this)" data="3">销量
+						<img class="price-top" src="images/new_list_13.jpg" alt="" />
+						<img class="price-down" src="images/new_list_16.jpg"/>
+					</li>
+					<li class="hy_max">
+					    <img src="images/hy_max_03.png">
+						<a href="javascript:;">大图</a>
+					</li>
+				</ul>
+			</nav>
+			<section>
+				<div id="wrapper">
+				  <div id="scroller">
+					<div class="hy_maxImg cl">
+					 <!--  <dl class="cl">
+					 	 <dt><img src="images/pic.png"></dt>
+					 	 <dd>
+					 	 	<h2>氨基酸蛋白质粉 安利皮爸高撒地方 （大）150ml</h2>
+					 	 	<span>本商品由叮当快药提供</span>
+					 	 	<p><em>￥</em>58.00</p>
+					 	 	<a>已有<em>2588人</em>购买</a>
+					 	 	<img src="images/icon4.png">
+					 	 </dd>
+					 </dl>
+					 <dl class="cl">
+					 	 <dt><img src="images/pic.png"></dt>
+					 	 <dd>
+					 	 	<h2>氨基酸蛋白质粉 安利皮爸高撒地方 （大）150ml</h2>
+					 	 	<span>本商品由叮当快药提供</span>
+					 	 	<p><em>￥</em>58.00</p>
+					 	 	<a>已有<em>2588人</em>购买</a>
+					 	 	<img src="images/icon4.png">
+					 	 </dd>
+					 </dl> -->
+					</div>
+					<div id="pullUp" class="" style="display:none">
+                      <span class="pullUpLabel">上拉加载更多...</span>
+		         </div>
+				</div>
+				</div>
+	        </section>
+			<div class="box-mask">
+				<div class="box-mask1"></div>
+			</div>
+	</body>
+</html>
+<script src="js/swiper-3.3.1.min.js"></script>
+<script src="js/zepto.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/iscroll4.js"></script>
+<script src="js/new_list.js"></script>
+<script src="js/base.js"></script>
+<script type="text/javascript">
+   var searchStr=getparam().searchStr;
+   var tolcount = 0;
+   var myScroll=false;
+   var flag = true;//控制点击多次排序的加载次数
+   var load = true;//控制上拉刷新的频繁操作
+	$(".hea-inp").attr('value',searchStr);
+	$(".hea-inp").on("focus",function(){
+		location.href='seach.html';
+	})
+	var menu=$('.hy_max>a'); //头部
+    var maxImg=$('#scroller>div').eq(0);
+    //var list_img=$('.hy_listImg');
+
+    menu.on('click',function(){ /*hy_listImg*/
+      if(maxImg.hasClass('hy_maxImg')){
+      	  maxImg.attr('class','hy_listImg cl');
+          $('.hy_max img').attr('src','images/list_1.png');
+          $('.hy_max a').text('列表');
+      } else {
+      	  maxImg.attr('class','hy_maxImg cl');
+      	  $('.hy_max img').attr('src','images/hy_max_03.png');
+      	  $('.hy_max a').text('大图');
+      }
+    });
+
+    //返回
+
+    function back(obj){
+       window.location.href = 'index.html?customerid='+getCookie('customerid');
+    }
+
+   
+    Ajax(1);
+	//价格排序
+    var page = 1;
+	function Price_Sorted (obj) {
+		if(flag ==true){
+			$(".hy_listImg").empty();
+		   var d=$(obj).attr('data');
+		   page=1
+		   $(obj).find('img').eq(0).attr('src','images/new_list_t.png').parent().addClass("pricechange");
+		   $(obj).find('img').eq(0).attr('src','images/new_list_t.png').parent().next().removeClass("salechange");
+		   if (d == 1) {
+		   	 Ajax(page,d); 
+		   	 $(obj).attr('data',2);
+		   	
+		   	 $(obj).find('img').eq(0).attr('src','images/new_list_t.png');
+		   	 $(obj).find('img').eq(1).attr('src','images/new_list_16.jpg');
+		   } else {
+		   	 Ajax(page,d); 
+		   	 $(obj).attr('data',1);
+		   	 $(obj).find('img').eq(1).attr('src','images/new_list_b.png')
+		   	 $(obj).find('img').eq(1).attr('src','images/new_list_b.png');
+		   	 $(obj).find('img').eq(0).attr('src','images/new_list_13.jpg');
+		   };
+		   $(obj).next().find('img').eq(0).attr('src','images/new_list_13.jpg');
+	       $(obj).next().find('img').eq(1).attr('src','images/new_list_16.jpg');
+		    $('#scroller>div').eq(0).empty();
+		}
+	};
+
+
+	//销量排序
+
+	function Sales_Order (obj) {
+		if(flag == true){
+		  $(".hy_listImg").empty();
+	      var d=$(obj).attr('data');
+		   page=1;
+		   $(obj).find('img').eq(0).attr('src','images/new_list_t.png').parent().addClass("salechange");
+		   $(obj).find('img').eq(0).attr('src','images/new_list_t.png').parent().prev().removeClass("pricechange");
+		   if(d==3){
+		   	 Ajax(page,d); 
+		   	 $(obj).attr('data',4);
+		   	 
+		   	 $(obj).find('img').eq(0).attr('src','images/new_list_t.png');
+		   	 $(obj).find('img').eq(1).attr('src','images/new_list_16.jpg');
+		   }else{
+		   	 Ajax(page,d); 
+		   	 $(obj).attr('data',3);
+		   	 $(obj).find('img').eq(1).attr('src','images/new_list_b.png');
+		   	 $(obj).find('img').eq(0).attr('src','images/new_list_13.jpg');
+		   }
+
+		   $(obj).prev().find('img').eq(0).attr('src','images/new_list_13.jpg');
+	       $(obj).prev().find('img').eq(1).attr('src','images/new_list_16.jpg');
+	       $('#scroller>div').eq(0).empty();
+	    }
+	}
+	
+
+	function pullUpAction () { //上拉加载更多
+		 //实现上拉加载更多的时候的排序
+		if(load == true){
+			var price = $("nav>ul>li:nth-of-type(1)");
+			var sale = $("nav>ul>li:nth-of-type(2)");	
+			var d;
+			if(price.hasClass("pricechange")){
+				d = price.attr("data");
+				if(d == "1"){
+					d = 2;
+				}else{
+					d = 1;
+				}
+				console.log("价格",d)
+			}else if(sale.hasClass("salechange")){
+				d = sale.attr("data");
+				if(d == "3"){
+					d = 4;
+				}else{
+					d = 3;
+				}
+				console.log("销量",d)
+			}else{
+				d = "1";
+			}
+			page++; 
+			if(page<=Math.ceil(tolcount/6)){
+				Ajax(page,d);
+				myScroll.refresh();
+			}else if(page>Math.ceil(tolcount/6)){
+				$('#pullUp').show();
+				$(".pullUpLabel").text("正在加载...")
+			}
+		} 
+	}
+
+	
+  function Ajax(page,d){ // ajax后台交互
+  	flag = false;
+  	load = false;
+	var searchStr=getparam().searchStr,count=6,page=page;
+	if(typeof(d) == "undefined"){
+	  var orderby='';
+	}else{
+	  var orderby=d;
+	};
+	console.log(d)
+    $.ajax({
+        type : "post",
+        url : "/testback/fast/getSearch", // 请求的地址
+        data :"info={searchStr:'" + searchStr + "',count:'" + count + "',pagenum:'" + page + "',orderby:'"+orderby+"',supid:null}",
+        dataType : "json",
+        success : function(data){
+        	console.log(data)
+        	tolcount = data.tolcount;
+          if ( page == 1 && data.prdMats.length == 0 ) {
+             $('section').addClass('pick');
+          }
+          if(data.code==0){
+            if(data.prdMats.length!=0){
+              tagList(data.prdMats);
+              $('#pullUp').show(); 
+            }else{
+                $('.pullUpLabel').text('没有更多内容了');
+                page=1;
+           };
+           if(data.prdMats.length < 6){
+           	 $('#pullUp').hide();
+           } else {
+           	$('#pullUp').show();
+           }
+          }else{
+          	$('#first').html('<span>'+data.msg+'</span>');
+          	$('.pullUpLabel').html('');
+          }
+          flag = true;
+          load = true;
+        }
+        
+    });
+}
+	function tagList (obj) {
+	         $.each(obj,function (i,b) {
+	         // 	console.log(b)
+	         $('<dl class="cl"><dt><img src="'+b.imgurl+'" data="'+b.prdid+'" onclick="tj(this)"/></dt><dd><h2>'+b.name+'</h2><span>'+b.supname+'</span><p><em>￥</em>'+b.nowprice+'</p><a>已有<em>'+b.countnum+'人</em>购买</a><img src="images/icon4.png" data="'+b.prdid+'" onclick="add(this)"></dd></dl>').appendTo($('#scroller>div').eq(0));
+	       });
+			if(myScroll == false){
+		      myScroll = true;
+		    }else {
+		     myScroll.refresh();
+		    }
+	    };
+</script>
